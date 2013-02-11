@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SOURCES="lib/util.js lib/Events.js lib/Model.js lib/Collection.js lib/Controller.js lib/ModelController.js lib/CollectionController.js" 
+SOURCES="lib/util.js lib/Events.js lib/Model.js lib/Collection.js lib/Controller.js lib/ModelController.js lib/CollectionController.js lib/Router.js" 
 
 # Uncompressed
 cat $SOURCES > craven.js
