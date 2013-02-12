@@ -586,7 +586,6 @@ CollectionController.prototype._removeModels = function(models, index) {
 }
 
 var supportHistory = window.history.pushState;
-var eventListener = window.addEventListener || window.attachEvent;
 
 var Router = {
   _routes: [],
@@ -611,7 +610,7 @@ var Router = {
       callback = function() { that._route(location.pathname); };
     }
 
-    eventListener.call(window, eventName, callback, false);
+    window.addEventListener(eventName, callback, false);
   },
 
   /** @this Object */
