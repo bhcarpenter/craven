@@ -5,7 +5,8 @@ var slice = arr.slice,
   push = arr.push,
   shift = arr.shift,
   pop = arr.pop,
-  unshift = arr.unshift;
+  unshift = arr.unshift,
+  map = arr.map;
 
 /**
  * Calls splice on the given array with an array of objects for replacement,
@@ -36,21 +37,6 @@ var pick = function(data, keys) {
     }
   }
   return copy;
-};
-
-/**
- * @param {Array} arr
- * @param {Function} iterator
- * @param {Object=} context
- */
-var map = function(arr, iterator, context) {
-  if (arr.map) return arr.map(iterator, context);
-  var count = arr.length;
-  var results = new Array(count);
-  while (count--) {
-    results[count] = iterator.call(context, arr[count]);
-  }
-  return results;
 };
 
 /**
@@ -383,7 +369,7 @@ Collection.prototype.removeAt = function(index) {
 
 /** @override */
 Collection.prototype.toJSON = function() {
-  return map(this, function(object) {
+  return this.map(function(object) {
     return object.toJSON();
   });
 }
@@ -402,7 +388,7 @@ Collection.prototype.toJSON = function() {
 Collection.prototype._objectify = function(data) {
   var modelClass = this['model'];
 
-  return map(data, function(model) {
+  return map.call(data, function(model) {
     if (!(model instanceof modelClass)) {
       model = new modelClass(model);
     }
