@@ -585,8 +585,6 @@ CollectionController.prototype._removeModels = function(models, index) {
   }
 }
 
-var supportHistory = window.history.pushState;
-
 var Router = {
   _routes: [],
 
@@ -602,24 +600,14 @@ var Router = {
   /** @this Object */
   activate: function() {
     var that = this;
-    var eventName = 'hashchange';
-    var callback = function() { that._route(location.hash.slice(1)); };
-
-    if (supportHistory) {
-      eventName = 'popstate';
-      callback = function() { that._route(location.pathname); };
-    }
-
-    window.addEventListener(eventName, callback, false);
+    window.addEventListener('popstate', function() {
+      that._route(location.pathname);
+    }, false);
   },
 
   /** @this Object */
   navigate: function(url) {
-    if (supportHistory) {
-      window.history.pushState({}, '', url);
-    } else {
-      location.hash = url;
-    }
+    window.history.pushState({}, '', url);
     this._route(url);
   },
 
