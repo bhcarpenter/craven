@@ -135,6 +135,7 @@ A controller that represents a Collection.
 **Instance properties:**
 
 - **`collection` -** The Collection that the CollectionController represents.
+- **`modelControllerType` -** The constructor of the ModelController to generate when Models are added to `collection`.
 
 **Collection Integration:**
 

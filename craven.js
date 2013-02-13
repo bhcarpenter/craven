@@ -542,6 +542,9 @@ var CollectionController = function(collection, opts, skipViewCreation) {
 
 CollectionController.prototype = new Controller(null, true);
 
+/** @type {Function} The constructor to use when generating ModelControllers */
+CollectionController.prototype['modelControllerType'] = ModelController;
+
 /** @override */
 CollectionController.prototype.remove = function() {
   this._unbindEvents();
@@ -578,7 +581,7 @@ CollectionController.prototype._addModels = function(models, index) {
   var controllers = new Array(count);
   var controller;
   while (count--) {
-    controller = controllers[count] = new ModelController(models[count]);
+    controller = controllers[count] = new this['modelControllerType'](models[count]);
     controller.render();
     fragment.appendChild(controller['view']);
   }
