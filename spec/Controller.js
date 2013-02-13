@@ -11,9 +11,11 @@ describe('Controller', function() {
   it('creates a view from options if one isn\'t given', function() {
     subject = new Controller({
       tagName: 'P',
-      id: 'testID',
-      className: 'myClass',
-      attributes: {custom: 'customVal'}
+      attributes: {
+        id: 'testID',
+        className: 'myClass',
+        custom: 'customVal'
+      }
     });
 
     expect(subject.view.tagName).toBe('P');
@@ -25,9 +27,13 @@ describe('Controller', function() {
   it('uses return values as options if they are functions', function() {
     subject = new Controller({
       tagName: function() { return 'P'; },
-      id: function() { return 'testID'; },
-      className: function() { return 'myClass'; },
-      attributes: function() { return {custom: 'customVal'}; }
+      attributes: function() {
+        return {
+          id: 'testID',
+          className: 'myClass',
+          custom: 'customVal'
+        };
+      }
     });
 
     expect(subject.view.tagName).toBe('P');

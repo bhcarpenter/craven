@@ -91,9 +91,7 @@ The base type of client-side controllers.
 - **`Controller([options, skipViewCreation])` -** Creates a new Controller, optionally setting the `options` hash as properties on the Controller. If `skipViewCreation` is not set to true, the controller will automatically generate a `view` object from the options. The following options have special meanings:
   - **`view` -** The DOMElement to use as the new Controller's `view` property. If this isn't given, one will automatically be created.
   - **`tagName` -** The type of DOMElement to create for the Controller's `view`, or a function that returns the type. The default is "div".
-  - **`id` -** The id attribute of the DOMElement to create for the Controller's `view`, or a function that returns the id.
-  - **`className` -** The class attribute of the DOMElement to create for the Controller's `view`, or a function that returns the class.
-  - **`attributes` -** A hash of additional attributes to add to the created DOMElement, or a functino that returns the hash.
+  - **`attributes` -** A hash of attributes to add to the created DOMElement, or a function that returns the hash.
 
 **Collection instance properties:**
 

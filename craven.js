@@ -414,13 +414,9 @@ var Controller = function(opts, skipViewCreation) {
   this['view'] || skipViewCreation || this._createView();
 }
 
-Controller.prototype['view'] = null;
 Controller.prototype['tagName'] = 'div';
-Controller.prototype['id'] = '';
-Controller.prototype['className'] = '';
 Controller.prototype['attributes'] = {};
 Controller.prototype.render = function() {}
-
 
 /**
  * @this Controller
@@ -434,15 +430,11 @@ Controller.prototype.remove = function() {
 
 /**
  * Creates this Controller's "view" property, using the given
- * tagName, attributes, id, and className
+ * tagName and attributes
  */
 Controller.prototype._createView = function() {
   var v = document.createElement(result(this, 'tagName'))
   extend(v, result(this, 'attributes'));
-  extend(v, {
-    id: result(this, 'id'),
-    className: result(this, 'className')
-  });
   this['view'] = v;
 }
 
