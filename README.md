@@ -120,6 +120,10 @@ A controller that represents a single Model object.
 
 The ModelController's `render` method will automatically be called when the Model's "change" event fires. Also, the ModelController's `remove` method will be called when the Model's "destroy" event fires.
 
+Additionally, the constructor ModelController has a method:
+
+- **`subtype([initializer])` -** Returns a new subtype of ModelController. If `initializer` is given, it will be called during object construction _after the superconstructor_.
+
 ####CollectionController
 
 A controller that represents a Collection.
