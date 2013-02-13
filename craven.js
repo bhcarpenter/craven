@@ -40,17 +40,13 @@ var pick = function(data, keys) {
 };
 
 /**
- * @param {...Object} base
+ * @param {Object} base
+ * @param {Object} extension
  */
-var extend = function(base) {
-  var extensions = slice.call(arguments, 1);
-  for (var i=0, count=extensions.length; i < count; i++) {
-    var extension = extensions[i];
-    for (var k in extension) {
-      base[k] = extension[k];
-    }
+var extend = function(base, extension) {
+  for (var k in extension) {
+    base[k] = extension[k];
   }
-  return base;
 };
 
 /**
@@ -414,7 +410,7 @@ Collection.prototype._unbind = function(models) {
  * properties (optional)
  */
 var Controller = function(opts, skipViewCreation) {
-  extend(this, opts);
+  opts && extend(this, opts);
   this['view'] || skipViewCreation || this._createView();
 }
 
@@ -441,14 +437,13 @@ Controller.prototype.remove = function() {
  * tagName, attributes, id, and className
  */
 Controller.prototype._createView = function() {
-  this['view'] = extend(
-    document.createElement(result(this, 'tagName')),
-    result(this, 'attributes'),
-    {
-      id: result(this, 'id'),
-      className: result(this, 'className')
-    }
-  );
+  var v = document.createElement(result(this, 'tagName'))
+  extend(v, result(this, 'attributes'));
+  extend(v, {
+    id: result(this, 'id'),
+    className: result(this, 'className')
+  });
+  this['view'] = v;
 }
 
 /**
