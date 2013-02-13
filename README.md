@@ -88,7 +88,7 @@ The base type of client-side controllers.
 
 **Constructor:**
 
-- **`Controller([options])` -** Creates a new Controller, optionally setting the `options` hash as properties on the Controller. The following options have special meanings:
+- **`Controller([options, skipViewCreation])` -** Creates a new Controller, optionally setting the `options` hash as properties on the Controller. If `skipViewCreation` is not set to true, the controller will automatically generate a `view` object from the options. The following options have special meanings:
   - **`view` -** The DOMElement to use as the new Controller's `view` property. If this isn't given, one will automatically be created.
   - **`tagName` -** The type of DOMElement to create for the Controller's `view`, or a function that returns the type. The default is "div".
   - **`id` -** The id attribute of the DOMElement to create for the Controller's `view`, or a function that returns the id.
@@ -110,7 +110,7 @@ A controller that represents a single Model object.
 
 **Constructor:**
 
-- **`ModelController(model[, options])` -** Creates a new ModelController instance that represents the given `model` object, optionally passing the given `options` to the superconstructor.
+- **`ModelController(model[, options, skipViewCreation])` -** Creates a new ModelController instance that represents the given `model` object, optionally passing the given `options` and `skipViewCreation` values to the superconstructor.
 
 **Instance properties:**
 
@@ -126,7 +126,7 @@ A controller that represents a Collection.
 
 **Constructor:**
 
-- **`CollectionController(collection[, options])` -** Creates a new CollectionController instances that represents the given `collection`, optionally passing the given `options` to the superconstructor.
+- **`CollectionController(collection[, options, skipViewCreation])` -** Creates a new CollectionController instances that represents the given `collection`, optionally passing the given `options` and `skipViewCreation` values to the superconstructor.
 
 **Instance properties:**
 

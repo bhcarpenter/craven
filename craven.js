@@ -417,11 +417,12 @@ var controllerDefaults = {
 /**
  * @constructor
  * @param {Object=} opts A list of options to attach to the controller
+ * @param {boolean=} skipViewCreation Set to true to disable the automatic view creation
  * properties (optional)
  */
-var Controller = function(opts) {
+var Controller = function(opts, skipViewCreation) {
   extend(this, controllerDefaults, opts);
-  this['view'] || this._createView();
+  this['view'] || skipViewCreation || this._createView();
 }
 
 Controller.prototype.render = function() {}
@@ -457,14 +458,15 @@ Controller.prototype._createView = function() {
  * @extends Controller
  * @param {Model} model Model object to display
  * @param {Object=} opts A list of options to attach to the controller
+ * @param {boolean=} skipViewCreation Set to true to disable the automatic view creation
  */
-var ModelController = function(model, opts) {
-  Controller.call(this, opts);
+var ModelController = function(model, opts, skipViewCreation) {
+  Controller.call(this, opts, skipViewCreation);
   this['model'] = model;
   this._bindEvents();
 }
 
-ModelController.prototype = new Controller();
+ModelController.prototype = new Controller(null, true);
 
 /** @override */
 ModelController.prototype.remove = function() {
@@ -513,16 +515,17 @@ var _onDestroy = function() {
  * @extends Controller
  * @param {Collection} collection Collection to display
  * @param {Object=} opts A list of options to attach to the controller
+ * @param {boolean=} skipViewCreation Set to true to disable the automatic view creation
  */
-var CollectionController = function(collection, opts) {
-  Controller.call(this, opts);
+var CollectionController = function(collection, opts, skipViewCreation) {
+  Controller.call(this, opts, skipViewCreation);
   this['collection'] = collection;
   this._modelControllers = [];
   this._addModels(collection, 0);
   this._bindEvents();
 }
 
-CollectionController.prototype = new Controller();
+CollectionController.prototype = new Controller(null, true);
 
 /** @override */
 CollectionController.prototype.remove = function() {
