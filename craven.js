@@ -364,6 +364,17 @@ Collection.prototype.toJSON = function() {
   });
 }
 
+/**
+ * Handles the "change" event from the models it holds, and
+ * re-triggers a "change" event on this Collection
+ * @param {Object} changed A hash of the attributes that changed
+ * @param {Object} old The previous attributes of the model
+ * @param {Model} model The model that was changed.
+ */
+Collection.prototype._triggerChange = function(changed, old, model) {
+  this.trigger('change', changed, old, model);
+}
+
 
 /* ***************************************
  * Converting to and from Model objects.
@@ -383,6 +394,7 @@ Collection.prototype._objectify = function(data) {
       model = new modelType(model);
     }
     model.on('destroy', this.remove, this);
+    model.on('change', this._triggerChange, this);
     return model;
   }, this);
 }
@@ -394,6 +406,7 @@ Collection.prototype._unbind = function(models) {
   var count = models.length;
   while (count--) {
     models[count].off('destroy', this.remove, this);
+    models[count].on('change', this._triggerChange, this);
   }
 }
 

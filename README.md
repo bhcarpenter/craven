@@ -75,6 +75,7 @@ These Array methods are overridden to trigger a "remove" event as well as removi
 
 - Any of these methods that add Models to the Collection will accept attribute hashes instead of Models, and will convert those attribute hashes into the model class specified in the constructor.
 - If the `destroy` method of any of the contained Models is called, that Model will automatically be removed from the Collection.
+- When one of the contained Models fires a "change" event, the Collection will also fire a "change" event, adding the Model that was changed to the arguments.
 
 ###Views and Controllers
 
