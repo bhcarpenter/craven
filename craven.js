@@ -105,9 +105,9 @@ var Events = {
 
   /**
    * @this {Object}
-   * @param {string} event
+   * @param {...*} event
    */
-  trigger: function(event /* , args... */) {
+  trigger: function(event) {
     if (this._events && event in this._events) {
 
       // Create copies since the handlers may unregister themselves during the loop.
@@ -137,25 +137,13 @@ var Model = function(attr) {
 }
 
 /**
- * Shortcut to create a model subtype.
- * @param {Array.<string>} attributes The array of attribute names for the new 
- * Model.
- * @param {function()=} initializer The constructor function. Runs after the
- * superconstructor. (optional)
- * @return {function(new:Model)} The Model subtype
+ * Generates a prototype instance for use by subtypes.
+ * @return {Model}
  */
-Model.subtype = function(attributes, initializer) {
-  var superConstructor = Craven['Model'];
-  var constructor = function() {
-    superConstructor.apply(this, arguments);
-    initializer && initializer.apply(this, arguments);
-  };
-  constructor.prototype = new superConstructor();
-  constructor.prototype['attributes'] = attributes;
-  return constructor;
+Model.Prototype = function() {
+  return new Model();
 }
 
-Model.prototype = new Object();
 Model.prototype.on = Events.on;
 Model.prototype.off = Events.off;
 Model.prototype.trigger = Events.trigger;
@@ -255,7 +243,7 @@ Model.prototype.destroy = function() {
  * Collections maintain an ordered set of models.
  *
  * @constructor
- * @param {function(new:Model)} model The type of Model to store in this Collection
+ * @param {?function(new:Model)} model The type of Model to store in this Collection.
  * @param {Array.<Model>=} models
  */
 var Collection = function(model, models) {
@@ -263,7 +251,15 @@ var Collection = function(model, models) {
   models && push.apply(this, this._objectify(models));
 }
 
-Collection.prototype = [];
+/**
+ * Generates a prototype instance for use by subtypes.
+ * @return {Collection}
+ */
+Collection.Prototype = function() {
+  return new Collection(null);
+}
+
+Collection.prototype = new Array();
 Collection.prototype.on = Events.on;
 Collection.prototype.off = Events.off;
 Collection.prototype.trigger = Events.trigger;
@@ -414,6 +410,14 @@ var Controller = function(opts, skipViewCreation) {
   this['view'] || skipViewCreation || this._createView();
 }
 
+/**
+ * Generates a prototype instance for use by subtypes.
+ * @return {Controller}
+ */
+Controller.Prototype = function() {
+  return new Controller(null, true);
+}
+
 Controller.prototype['tagName'] = 'div';
 Controller.prototype['attributes'] = {};
 Controller.prototype.render = function() {}
@@ -441,7 +445,7 @@ Controller.prototype._createView = function() {
 /**
  * @constructor
  * @extends Controller
- * @param {Model=} model Model object to display, required unless creating an object to use as a prototype.
+ * @param {Model} model Model object to display.
  * @param {Object=} opts A list of options to attach to the controller
  * @param {boolean=} skipViewCreation Set to true to disable the automatic view creation
  */
@@ -452,21 +456,14 @@ var ModelController = function(model, opts, skipViewCreation) {
 }
 
 /**
- * Shortcut to create a ModelContorller subtype.
- * @param {function()=} initializer The initializer function. Runs after the
- * superconstructor. (optional)
- * @return {function(new:ModelController)} The ModelController subtype
+ * Generates a prototype instance for use by subtypes.
+ * @return {ModelController}
  */
-ModelController.subtype = function(initializer) {
-  var constructor = function() {
-    ModelController.apply(this, arguments);
-    initializer && initializer.apply(this, arguments);
-  }
-  constructor.prototype = new ModelController(null, null, true);
-  return constructor;
-};
+ModelController.Prototype = function() {
+  return new ModelController(null, null, true);
+}
 
-ModelController.prototype = new Controller(null, true);
+ModelController.prototype = Controller.Prototype();
 
 /** @override */
 ModelController.prototype.remove = function() {
@@ -521,11 +518,23 @@ var CollectionController = function(collection, opts, skipViewCreation) {
   Controller.call(this, opts, skipViewCreation);
   this['collection'] = collection;
   this._modelControllers = [];
-  this._addModels(collection, 0);
-  this._bindEvents();
+
+  if (collection) {
+    this._addModels(collection, 0);
+    this._bindEvents();
+  }
 }
 
-CollectionController.prototype = new Controller(null, true);
+/**
+ * Generates a prototype instance for use by subtypes.
+ * @return {CollectionController}
+ */
+CollectionController.Prototype = function() {
+  return new CollectionController(null, null, true);
+}
+
+/** @type {Controller} */
+CollectionController.prototype = Controller.Prototype();
 
 /** @type {Function} The constructor to use when generating ModelControllers */
 CollectionController.prototype['modelControllerType'] = ModelController;
@@ -643,7 +652,7 @@ Events['off'] = Events.off;
 Events['trigger'] = Events.trigger;
 
 Craven['Model'] = Model;
-Model['subtype'] = Model.subtype;
+Model['Prototype'] = Model.Prototype;
 Model.prototype['reset'] = Model.prototype.reset;
 Model.prototype['update'] = Model.prototype.update;
 Model.prototype['toJSON'] = Model.prototype.toJSON;
@@ -655,6 +664,7 @@ Model.prototype['off'] = Model.prototype.off;
 Model.prototype['trigger'] = Model.prototype.trigger;
 
 Craven['Collection'] = Collection;
+Collection['Prototype'] = Collection.Prototype;
 Collection.prototype['reset'] = Collection.prototype.reset;
 Collection.prototype['remove'] = Collection.prototype.remove;
 Collection.prototype['removeAt'] = Collection.prototype.removeAt;
@@ -663,12 +673,15 @@ Collection.prototype['off'] = Collection.prototype.off;
 Collection.prototype['trigger'] = Collection.prototype.trigger;
 
 Craven['Controller'] = Controller;
+Controller['Prototype'] = Controller.Prototype;
 Controller.prototype['render'] = Controller.prototype.render;
 Controller.prototype['remove'] = Controller.prototype.remove;
 
 Craven['ModelController'] = ModelController;
-ModelController['subtype'] = ModelController.subtype;
+ModelController['Prototype'] = ModelController.Prototype;
+
 Craven['CollectionController'] = CollectionController;
+CollectionController['Prototype'] = CollectionController.Prototype;
 
 Craven['Router'] = Router;
 Router['add'] = Router.add;

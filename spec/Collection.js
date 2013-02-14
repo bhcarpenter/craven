@@ -4,7 +4,12 @@ var Collection = Craven.Collection;
 describe('Collection', function() {
   var subject;
 
-  var TestModel = Model.subtype(['prop1', 'prop2']);
+  var TestModel = function(data) {
+    Model.call(this, data);
+  }
+  TestModel.prototype = Model.Prototype();
+  TestModel.prototype.attributes = ['prop1', 'prop2'];
+
   var models = [new TestModel, new TestModel];
 
   describe('constructor', function() {

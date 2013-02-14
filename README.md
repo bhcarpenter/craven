@@ -44,10 +44,6 @@ It also has one public property:
 
 - `attributes` - An array of attribute names to read when serializing the object using toJSON. Also used in determining if the object has been "changed" or not.
 
-Additionally, the constructor Model has a method:
-
-- `subtype(attributesList[, initializer])` - Returns a new subtype of Model. It will use `attributesList` as its list of serialiable attributes. If `initializer` is given, it will be called during object construction _after the superconstructor_.
-
 ####Collection
 
 A constructor that creates a collection for holding groups of a particular Model subtype. Collections are subtypes of Array, so any methods that work on normal arrays also work on Collections.
@@ -118,10 +114,6 @@ A controller that represents a single Model object.
 
 The ModelController's `render` method will automatically be called when the Model's "change" event fires. Also, the ModelController's `remove` method will be called when the Model's "destroy" event fires.
 
-Additionally, the constructor ModelController has a method:
-
-- `subtype([initializer])` - Returns a new subtype of ModelController. If `initializer` is given, it will be called during object construction _after the superconstructor_.
-
 ####CollectionController
 
 A controller that represents a Collection.
@@ -153,6 +145,19 @@ An object with the following methods:
   - `handler` - A function to run when the route is matched.
   - `context` - The object to use as `this` when executing the `handler`.
 - `navigate(url)` - Updates the browser's location bar to match the given URL, and executes and registered handlers that match the URL.
+
+###Extending Craven.js Types
+
+All constructors provided by Craven.js have a method called `Prototype()` which returns an instance of that type suitable for use as the prototype of your own types. It is recommended that you call the superconstructor in your constructor. Example:
+
+```javascript
+var MyController = function(opts) {
+    Controller.call(this, opts);
+    // Do something...
+}
+
+MyController.prototype = Controller.Prototype();
+```
 
 Polyfills
 ---------

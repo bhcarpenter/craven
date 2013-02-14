@@ -7,7 +7,10 @@ describe('CollectionController', function() {
   var subject;
   var collection;
 
-  var TestModelController = ModelController.subtype();
+  var TestModelController = function() {
+    ModelController.apply(this, arguments);
+  }
+  TestModelController.prototype = ModelController.Prototype();
   TestModelController.prototype.tagName = 'P';
 
   beforeEach(function() {

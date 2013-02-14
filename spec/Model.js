@@ -99,42 +99,5 @@ describe('Model', function() {
     });
   });
 
-  describe('subtype', function() {
-    it('returns a new Model subtype', function() {
-      var Model2 = Model.subtype(['prop1']);
-      var instance = new Model2();
-      expect(instance instanceof Model).toBe(true);
-    });
-
-    it('sets the given argument as the subtype\'s arguments list', function() {
-      var attributes = ['prop1', 'prop2'];
-      var Model2 = Model.subtype(attributes);
-      var instance = new Model2();
-      expect(instance.attributes).toBe(attributes);
-    });
-
-    it('automatically calls the superconstructor', function() {
-      var originalConstructor = Model;
-      spyOn(Craven, 'Model');
-
-      var Model2 = Model.subtype([]);
-
-      var instance = new Model2();
-
-      expect(Craven.Model).toHaveBeenCalled();
-      Craven.Model = originalConstructor;
-    });
-
-    it('calls the initializer function after the superconstructor if one is given', function() {
-      var mock = { initializer: function(){} };
-      spyOn(mock, 'initializer');
-
-      var Model2 = Model.subtype(['prop1'], mock.initializer);
-      var instance = new Model2();
-      expect(mock.initializer).toHaveBeenCalled();
-    });
-
-  });
-
 });
 

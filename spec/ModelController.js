@@ -5,7 +5,11 @@ describe('ModelController', function() {
   var subject;
   var model;
 
-  var TestModel = Model.subtype(['prop1', 'prop2']);
+  var TestModel = function(data) {
+    Model.call(this, data);
+  }
+  TestModel.prototype = Model.Prototype();
+  TestModel.prototype.attributes = ['prop1', 'prop2'];
 
   beforeEach(function() {
     addPubSubMatchers.call(this);
