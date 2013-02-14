@@ -10,23 +10,29 @@ describe('Collection', function() {
   TestModel.prototype = Model.Prototype();
   TestModel.prototype.attributes = ['prop1', 'prop2'];
 
+  var TestCollection = function(models) {
+    Collection.call(this, models);
+  }
+  TestCollection.prototype = Collection.Prototype();
+  TestCollection.prototype.modelType = TestModel;
+
   var models = [new TestModel, new TestModel];
 
   describe('constructor', function() {
     it('initializes with an empty array', function() {
-      subject = new Collection(TestModel);
+      subject = new TestCollection();
       expect(subject.length).toBe(0);
     });
 
     it('stores models passed in the constructor in order', function() {
-      subject = new Collection(TestModel, models);
+      subject = new TestCollection(models);
       expect(subject[0]).toBe(models[0]);
       expect(subject[1]).toBe(models[1]);
     });
 
     it('converts attribute hashes into Model objects', function() {
       var models = [{prop1: 'val1', prop2: 'val2'}];
-      subject = new Collection(TestModel, models);
+      subject = new TestCollection(models);
       expect(subject[0] instanceof TestModel).toBe(true);
       expect(subject[0].prop1).toBe(models[0].prop1);
     });
@@ -34,7 +40,7 @@ describe('Collection', function() {
 
   describe('mutators', function() {
     beforeEach(function() {
-      subject = new Collection(TestModel, models);
+      subject = new TestCollection(models);
       addPubSubMatchers.call(this);
     });
 
@@ -236,7 +242,7 @@ describe('Collection', function() {
   }); // mutators
 
   it('automatically removes destroyed Models', function() {
-    subject = new Collection(TestModel, models);
+    subject = new TestCollection(models);
     models[0].destroy();
     expect(subject[0]).toBe(models[1]);
   });

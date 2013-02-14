@@ -243,11 +243,9 @@ Model.prototype.destroy = function() {
  * Collections maintain an ordered set of models.
  *
  * @constructor
- * @param {?function(new:Model)} model The type of Model to store in this Collection.
- * @param {Array.<Model>=} models
+ * @param {Array.<Model>=} models Models to initialize the collection with
  */
-var Collection = function(model, models) {
-  this['model'] = model;
+var Collection = function(models) {
   models && push.apply(this, this._objectify(models));
 }
 
@@ -256,14 +254,14 @@ var Collection = function(model, models) {
  * @return {Collection}
  */
 Collection.Prototype = function() {
-  return new Collection(null);
+  return new Collection();
 }
 
 Collection.prototype = new Array();
 Collection.prototype.on = Events.on;
 Collection.prototype.off = Events.off;
 Collection.prototype.trigger = Events.trigger;
-
+Collection.prototype['modelType'] = Model;
 
 /* ***************************************
  * Extend Array mutators.
@@ -378,11 +376,11 @@ Collection.prototype.toJSON = function() {
  * @param {Array.<Model>|Array.<Object>} data
  */
 Collection.prototype._objectify = function(data) {
-  var modelClass = this['model'];
+  var modelType = this['modelType'];
 
   return map.call(data, function(model) {
-    if (!(model instanceof modelClass)) {
-      model = new modelClass(model);
+    if (!(model instanceof modelType)) {
+      model = new modelType(model);
     }
     model.on('destroy', this.remove, this);
     return model;

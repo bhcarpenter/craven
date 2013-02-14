@@ -50,7 +50,11 @@ A constructor that creates a collection for holding groups of a particular Model
 
 **Constructor:**
 
-- `Collection(model[, models])` - Create a new Collection of the given `model` class, optionally initializing it with the given `models` array.
+- `Collection([models])` - Create a new Collection, optionally initializing it with the given `models` array.
+
+**Collection instance properties:**
+
+- `modelType` - The type of Model to create if an attribute hash is given to one of the insertion methods below. See "Model Integration" below for details.
 
 **Adding Models:**
 

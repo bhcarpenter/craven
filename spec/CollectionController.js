@@ -14,7 +14,7 @@ describe('CollectionController', function() {
   TestModelController.prototype.tagName = 'P';
 
   beforeEach(function() {
-    collection = new Collection(Model);
+    collection = new Collection();
     subject = new CollectionController(collection);
     subject.modelControllerType = TestModelController;
   });
