@@ -144,8 +144,13 @@ Model.Prototype = function() {
   return new Model();
 }
 
+/** @type {function(string, function(), Object)} */
 Model.prototype.on = Events.on;
+
+/** @type {function(string, function(), Object)} */
 Model.prototype.off = Events.off;
+
+/** @type {function(...)} */
 Model.prototype.trigger = Events.trigger;
 
 /** @dict */
@@ -233,6 +238,7 @@ Model.prototype.save = function() {
   return true;
 }
 
+/** */
 Model.prototype.destroy = function() {
   this.trigger('destroy');
 }
@@ -257,10 +263,19 @@ Collection.Prototype = function() {
   return new Collection();
 }
 
+/** @type {Array} */
 Collection.prototype = new Array();
+
+/** @type {function(string, function(), Object)} */
 Collection.prototype.on = Events.on;
+
+/** @type {function(string, function(), Object)} */
 Collection.prototype.off = Events.off;
+
+/** @type {function(...)} */
 Collection.prototype.trigger = Events.trigger;
+
+/** @type {function(new:Model)} */
 Collection.prototype['modelType'] = Model;
 
 /* ***************************************
@@ -429,8 +444,13 @@ Controller.Prototype = function() {
   return new Controller(null, true);
 }
 
+/** @type {string} */
 Controller.prototype['tagName'] = 'div';
+
+/** @type {Object} */
 Controller.prototype['attributes'] = {};
+
+/** */
 Controller.prototype.render = function() {}
 
 /**
@@ -474,6 +494,7 @@ ModelController.Prototype = function() {
   return new ModelController(null, null, true);
 }
 
+/** @type {Controller} */
 ModelController.prototype = Controller.Prototype();
 
 /** @override */
