@@ -37,7 +37,7 @@ var pick = function(data, keys) {
     }
   }
   return copy;
-};
+}
 
 /**
  * @param {Object} base
@@ -47,7 +47,7 @@ var extend = function(base, extension) {
   for (var k in extension) {
     base[k] = extension[k];
   }
-};
+}
 
 /**
  * @param {Object} object
@@ -359,7 +359,7 @@ Collection.prototype.reset = function(data) {
  */
 Collection.prototype.remove = function(obj) {
   this.removeAt(this.indexOf(obj));
-};
+}
 
 /**
  * @param {number} index
