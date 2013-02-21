@@ -32,9 +32,7 @@ var pick = function(data, keys) {
   var copy = {};
   var count = keys.length;
   while (count--) {
-    if (keys[count] in data) {
-      copy[keys[count]] = data[keys[count]];
-    }
+    copy[keys[count]] = data[keys[count]];
   }
   return copy;
 }
@@ -88,12 +86,14 @@ var Events = {
    * @param {Object} ctx
    */
   off: function(event, fct, ctx) {
-    if (this._events && event in this._events) {
-      var handlers = this._events[event];
-      var contexts = this._eventContexts[event];
+    var handlers, contexts, count;
 
-      var count = handlers.length;
-      while (count--) {
+    if (
+      this._events &&
+      (handlers = this._events[event]) &&
+      (contexts = this._eventContexts[event])
+    ) {
+      for (count = handlers.length; count--;) {
         if (handlers[count] == fct && contexts[count] == ctx) {
           handlers.splice(count, 1);
           contexts.splice(count, 1);
@@ -108,22 +108,31 @@ var Events = {
    * @param {...*} event
    */
   trigger: function(event) {
-    if (this._events && event in this._events) {
+    var handlers, contexts, count, args;
 
+    if (
+      this._events &&
+      (handlers = this._events[event]) &&
+      (contexts = this._eventContexts[event])
+    ) {
       // Create copies since the handlers may unregister themselves during the loop.
-      var handlers = this._events[event].slice(0);
-      var contexts = this._eventContexts[event].slice(0);
-
-      var count = handlers.length;
-      var args = slice.call(arguments, 1);
+      handlers = handlers.slice(0);
+      contexts = contexts.slice(0);
+      args = slice.call(arguments, 1);
       args.push(this);
-      while (count--) {
+
+      for (count = handlers.length; count--;) {
         handlers[count].apply(contexts[count], args);
       }
-
     }
   }
 };
+
+// Export these functions here instead of in exports.js so that objects that
+// extend Events will have the exports again.
+Events['on'] = Events.on;
+Events['off'] = Events.off;
+Events['trigger'] = Events.trigger;
 
 /**
  * Model constructor
@@ -144,14 +153,7 @@ Model.Prototype = function() {
   return new Model();
 }
 
-/** @type {function(string, function(), Object)} */
-Model.prototype.on = Events.on;
-
-/** @type {function(string, function(), Object)} */
-Model.prototype.off = Events.off;
-
-/** @type {function(...)} */
-Model.prototype.trigger = Events.trigger;
+extend(Model.prototype, /** @lends {Model.prototype} */(Events));
 
 /** @dict */
 Model.prototype._saved = {};
@@ -171,9 +173,7 @@ Model.prototype['attributes'] = [];
  * @param {Object} data
  */
 Model.prototype.reset = function(data) {
-  var filtered = pick(data, this['attributes']);
-  this._saved = filtered;
-  extend(this, filtered);
+  extend(this, this._saved = pick(data, this['attributes']));
 }
 
 /**
@@ -185,8 +185,7 @@ Model.prototype.reset = function(data) {
  * @param {Object} data
  */
 Model.prototype.update = function(data) {
-  var filtered = pick(data, this['attributes']);
-  extend(this, filtered);
+  extend(this, pick(data, this['attributes']));
 }
 
 /**
@@ -217,25 +216,21 @@ Model.prototype.validate = function() {}
  * If any attributes have changed, a 'change' event is triggered, and handlers
  * are passed a hash of the values that changed, and a copy of the previous
  * state.
- *
- * @return {boolean}
  */
 Model.prototype.save = function() {
-  if (false === this['validate']()) return false;
+  if (this['validate']() !== false) {
+    var old = this._saved;
+    var current = this._saved = this.toJSON();
 
-  var current = this.toJSON();
-  var old = this._saved;
-  this._saved = current;
-
-  var key, changed={}, hasChanged=false;
-  for (key in current) {
-    if (current[key] !== old[key]) {
-      hasChanged = changed[key] = current[key];
+    var key, changed={}, hasChanged=false;
+    for (key in current) {
+      if (current[key] !== old[key]) {
+        hasChanged = changed[key] = current[key];
+      }
     }
-  }
 
-  hasChanged && this.trigger('change', changed, old);
-  return true;
+    hasChanged && this.trigger('change', changed, old);
+  }
 }
 
 /** */
@@ -266,14 +261,7 @@ Collection.Prototype = function() {
 /** @type {Array} */
 Collection.prototype = new Array();
 
-/** @type {function(string, function(), Object)} */
-Collection.prototype.on = Events.on;
-
-/** @type {function(string, function(), Object)} */
-Collection.prototype.off = Events.off;
-
-/** @type {function(...)} */
-Collection.prototype.trigger = Events.trigger;
+extend(Collection.prototype, /** @lends {Collection.prototype} */(Events));
 
 /** @type {function(new:Model)} */
 Collection.prototype['modelType'] = Model;
@@ -679,9 +667,6 @@ var Craven = {};
 window['Craven'] = Craven;
 
 Craven['Events'] = Events;
-Events['on'] = Events.on;
-Events['off'] = Events.off;
-Events['trigger'] = Events.trigger;
 
 Craven['Model'] = Model;
 Model['Prototype'] = Model.Prototype;
@@ -691,18 +676,12 @@ Model.prototype['toJSON'] = Model.prototype.toJSON;
 Model.prototype['validate'] = Model.prototype.validate;
 Model.prototype['save'] = Model.prototype.save;
 Model.prototype['destroy'] = Model.prototype.destroy;
-Model.prototype['on'] = Model.prototype.on;
-Model.prototype['off'] = Model.prototype.off;
-Model.prototype['trigger'] = Model.prototype.trigger;
 
 Craven['Collection'] = Collection;
 Collection['Prototype'] = Collection.Prototype;
 Collection.prototype['reset'] = Collection.prototype.reset;
 Collection.prototype['remove'] = Collection.prototype.remove;
 Collection.prototype['removeAt'] = Collection.prototype.removeAt;
-Collection.prototype['on'] = Collection.prototype.on;
-Collection.prototype['off'] = Collection.prototype.off;
-Collection.prototype['trigger'] = Collection.prototype.trigger;
 
 Craven['Controller'] = Controller;
 Controller['Prototype'] = Controller.Prototype;
