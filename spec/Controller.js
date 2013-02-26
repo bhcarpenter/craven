@@ -1,4 +1,5 @@
 var Controller = Craven.Controller;
+var Model = Craven.Model;
 
 describe('Controller', function() {
   var subject;
@@ -24,6 +25,23 @@ describe('Controller', function() {
     expect(subject.view.custom).toBe('customVal');
   });
 
+  it('binds to the events specified by the `events` options', function() {
+    var model = new Model();
+
+    var SubController = function() { Controller.apply(this, arguments) };
+    SubController.prototype = Controller.Prototype();
+    SubController.prototype.render = function() {}
+    spyOn(SubController.prototype, 'render');
+
+    subject = new SubController({
+      model: model,
+      events: { 'update': 'render' }
+    });
+
+    model.trigger('update');
+    expect(subject.render).toHaveBeenCalled()
+  });
+
   describe('remove', function() {
     it('removes the view from the DOM', function() {
       subject = new Controller();
@@ -32,6 +50,24 @@ describe('Controller', function() {
 
       subject.remove();
       expect(subject.view.parentNode).toBe(null);
+    });
+
+    it('unbinds from model events', function() {
+      var model = new Model();
+
+      var SubController = function() { Controller.apply(this, arguments) };
+      SubController.prototype = Controller.Prototype();
+      SubController.prototype.render = function() {}
+      spyOn(SubController.prototype, 'render');
+
+      subject = new SubController({
+        model: model,
+        events: { 'update': 'render' }
+      });
+      subject.remove();
+
+      model.trigger('update');
+      expect(subject.render).not.toHaveBeenCalled()
     });
   });
 

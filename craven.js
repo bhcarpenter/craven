@@ -413,6 +413,7 @@ Collection.prototype._unbind = function(models) {
 var Controller = function(opts, skipViewCreation) {
   opts && extend(this, opts);
   this['view'] || skipViewCreation || this._createView();
+  this._bindModel();
 }
 
 /**
@@ -435,6 +436,8 @@ Controller.prototype.remove = function() {
   var el = this['view'];
   var parent = el.parentNode;
   parent && parent.removeChild(el);
+
+  this._unbindModel();
 }
 
 /**
@@ -445,6 +448,33 @@ Controller.prototype._createView = function() {
   var v = document.createElement(this['tagName']);
   extend(v, this['attributes']);
   this['view'] = v;
+}
+
+/**
+ */
+Controller.prototype._bindModel = function() {
+  toggleModelEvents(this, 'on');
+}
+
+/**
+ */
+Controller.prototype._unbindModel = function() {
+  toggleModelEvents(this, 'off');
+}
+
+/**
+ * Helper function, reduces code duplication.
+ */
+var toggleModelEvents = function(controller, onoff) {
+  var model = controller['model'];
+  var events = controller['events'];
+
+  if (model && events) {
+    for (var event in events) {
+      var methodName = events[event];
+      model[onoff](event, controller[methodName], controller);
+    }
+  }
 }
 
 var Router = {

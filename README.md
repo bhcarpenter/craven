@@ -90,9 +90,11 @@ The base type of client-side controllers.
 **Constructor:**
 
 - `Controller([options, skipViewCreation])` - Creates a new Controller, optionally setting the `options` hash as properties on the Controller. If `skipViewCreation` is not set to true, the controller will automatically generate a `view` object from the options. The following options have special meanings:
+  - `model` - The model to use with this Controller. It can be any JavaScript object, but if you are using the automatic event binding (see `events` below), it needs to conform to Craven.Events. Good candidates for this value are instances of Craven.Model and Craven.Collection.
   - `view` - The DOMElement to use as the new Controller's `view` property. If this isn't given, one will automatically be created.
   - `tagName` - The type of DOMElement to create for the Controller's `view`. The default is "div".
   - `attributes` - A hash of attributes to add to the created DOMElement.
+  - `events` - An \[eventName => controllerMethodName\] hash of events to listen for on the model. The `controllerMethodName` method will be executed in the context of the Controller.
 
 **Controller instance properties:**
 
@@ -100,7 +102,7 @@ The base type of client-side controllers.
 
 **Controller instance methods:**
 
-- `remove()` - Removes the `view` property from the DOM heirarchy, if it has been added to the page.
+- `remove()` - Removes the `view` property from the DOM heirarchy, if it has been added to the page, and unbinds from events on the model.
 
 ###Routing
 
