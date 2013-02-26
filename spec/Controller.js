@@ -4,6 +4,16 @@ var Model = Craven.Model;
 describe('Controller', function() {
   var subject;
 
+  var SubController = function() { Controller.apply(this, arguments) };
+  SubController.prototype = Controller.Prototype();
+  SubController.prototype.render = function() {}
+
+  function triggerDOMEvent(node, event) {
+    var evt = document.createEvent("HTMLEvents");
+    evt.initEvent(event, true, true); // event type,bubbling,cancelable
+    node.dispatchEvent(evt);
+  }
+
   it('saves options passed to the constructor', function() {
     subject = new Controller({prop1: 'value1'});
     expect(subject.prop1).toBe('value1');
@@ -28,9 +38,6 @@ describe('Controller', function() {
   it('binds to the events specified by the `events` options', function() {
     var model = new Model();
 
-    var SubController = function() { Controller.apply(this, arguments) };
-    SubController.prototype = Controller.Prototype();
-    SubController.prototype.render = function() {}
     spyOn(SubController.prototype, 'render');
 
     subject = new SubController({
@@ -41,6 +48,28 @@ describe('Controller', function() {
     model.trigger('update');
     expect(subject.render).toHaveBeenCalled()
   });
+
+  it('binds to the DOM events specified by the `domEvents` options', function() {
+    var model = new Model();
+
+    spyOn(SubController.prototype, 'render');
+
+    subject = new SubController({
+      model: model,
+      domEvents: { 
+        click: {
+          '': 'render' 
+        }
+      }
+    });
+
+    triggerDOMEvent(subject.view, 'click');
+    expect(subject.render).toHaveBeenCalled()
+  });
+
+  // TODO: figure out how to test this.
+  //it('uses event delegation for `domEvents`', function() {
+  //});
 
   describe('remove', function() {
     it('removes the view from the DOM', function() {
@@ -55,9 +84,6 @@ describe('Controller', function() {
     it('unbinds from model events', function() {
       var model = new Model();
 
-      var SubController = function() { Controller.apply(this, arguments) };
-      SubController.prototype = Controller.Prototype();
-      SubController.prototype.render = function() {}
       spyOn(SubController.prototype, 'render');
 
       subject = new SubController({
@@ -67,6 +93,25 @@ describe('Controller', function() {
       subject.remove();
 
       model.trigger('update');
+      expect(subject.render).not.toHaveBeenCalled()
+    });
+
+    it('unbinds the DOM events', function() {
+      var model = new Model();
+
+      spyOn(SubController.prototype, 'render');
+
+      subject = new SubController({
+        model: model,
+        domEvents: { 
+          click: {
+            '': 'render' 
+          }
+        }
+      });
+      subject.remove();
+
+      triggerDOMEvent(subject.view, 'click');
       expect(subject.render).not.toHaveBeenCalled()
     });
   });

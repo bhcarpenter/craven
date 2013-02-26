@@ -413,7 +413,9 @@ Collection.prototype._unbind = function(models) {
 var Controller = function(opts, skipViewCreation) {
   opts && extend(this, opts);
   this['view'] || skipViewCreation || this._createView();
+  this._createViewListener();
   this._bindModel();
+  this._bindView();
 }
 
 /**
@@ -438,6 +440,7 @@ Controller.prototype.remove = function() {
   parent && parent.removeChild(el);
 
   this._unbindModel();
+  this._unbindView();
 }
 
 /**
@@ -463,6 +466,40 @@ Controller.prototype._unbindModel = function() {
 }
 
 /**
+ */
+Controller.prototype._bindView = function() {
+  toggleViewEvents(this, 'addEventListener');
+}
+
+/**
+ */
+Controller.prototype._unbindView = function() {
+  toggleViewEvents(this, 'removeEventListener');
+}
+
+/**
+ * Creates a view listener function that is bound to the current controller.
+ */
+Controller.prototype._createViewListener = function() {
+  var that = this;
+  this._boundViewListener = function(event) {
+    var elements = that['domEvents'][event.type];
+    var view = that['view'];
+    var target = event.target;
+
+    for (var element in elements) {
+      var methodName = elements[element];
+      if (
+          (element === '' && view === target)
+          || (-1 !== slice.call(view.querySelectorAll(element), 0).indexOf(target))
+      ) {
+        that[methodName](event);
+      }
+    }
+  }
+}
+
+/**
  * Helper function, reduces code duplication.
  */
 var toggleModelEvents = function(controller, onoff) {
@@ -473,6 +510,20 @@ var toggleModelEvents = function(controller, onoff) {
     for (var event in events) {
       var methodName = events[event];
       model[onoff](event, controller[methodName], controller);
+    }
+  }
+}
+
+/**
+ * Helper function, reduces code duplication.
+ */
+var toggleViewEvents = function(controller, onoff) {
+  var events = controller['domEvents'];
+  var view = controller['view'];
+
+  if (events && view) {
+    for (var event in events) {
+      view[onoff](event, controller._boundViewListener, false);
     }
   }
 }

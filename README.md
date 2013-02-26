@@ -95,6 +95,7 @@ The base type of client-side controllers.
   - `tagName` - The type of DOMElement to create for the Controller's `view`. The default is "div".
   - `attributes` - A hash of attributes to add to the created DOMElement.
   - `events` - An \[eventName => controllerMethodName\] hash of events to listen for on the model. The `controllerMethodName` method will be executed in the context of the Controller.
+  - `domEvents` - An \[eventName => \[domSelector => controllerMethodName\]\] hash of events to listen for on the view. The `controllerMethodName` method will be executed in the context of the Controller whenever the `eventName` event is triggerd on a child of the Controller's `view` that matches the given `DOMSelector`. Note that this is a "live" binding, so feel free to change the contents of the `view`; the events will still fire.  To specify events that happen on the `view` itself, use an empty string ('') for `domSelector`.
 
 **Controller instance properties:**
 
