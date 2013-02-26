@@ -103,39 +103,6 @@ The base type of client-side controllers.
 - `render()` - A noop by default. Instances should override this method to populate the contents of the Controller's view.
 - `remove()` - Removes the `view` property from the DOM heirarchy, if it has been added to the page.
 
-####ModelController
-
-A controller that represents a single Model object.
-
-**Constructor:**
-
-- `ModelController(model[, options, skipViewCreation])` - Creates a new ModelController instance that represents the given `model` object, optionally passing the given `options` and `skipViewCreation` values to the superconstructor.
-
-**Instance properties:**
-
-- `model` - The Model that the ModelController represents.
-
-**Model Integration:**
-
-The ModelController's `render` method will automatically be called when the Model's "change" event fires. Also, the ModelController's `remove` method will be called when the Model's "destroy" event fires.
-
-####CollectionController
-
-A controller that represents a Collection.
-
-**Constructor:**
-
-- `CollectionController(collection[, options, skipViewCreation])` - Creates a new CollectionController instance that represents the given `collection`, optionally passing the given `options` and `skipViewCreation` values to the superconstructor.
-
-**Instance properties:**
-
-- `collection` - The Collection that the CollectionController represents.
-- `modelControllerType` - The constructor of the ModelController to generate when Models are added to `collection`.
-
-**Collection Integration:**
-
-When Models are added to the Collection represented by the CollectionController, the CollectionController will automatically create new ModelControllers for the Models and insert their views into the appropriate position within the CollectionController's view. Likewise, removing a Model from the Collection will also remove that Model's view.
-
 ###Routing
 
 The Craven.js routing component provides a way of registering callbacks to execute whenever the browser's history changes, as well as manually updating the browser's location bar (and triggering matched routes to execute).

@@ -444,7 +444,6 @@ Controller.prototype.render = function() {}
 /**
  * @this Controller
  */
-var _remove =  // Alias for later chaining (size optimization)
 Controller.prototype.remove = function() {
   var el = this['view'];
   var parent = el.parentNode;
@@ -459,165 +458,6 @@ Controller.prototype._createView = function() {
   var v = document.createElement(result(this, 'tagName'))
   extend(v, result(this, 'attributes'));
   this['view'] = v;
-}
-
-/**
- * @constructor
- * @extends Controller
- * @param {Model} model Model object to display.
- * @param {Object=} opts A list of options to attach to the controller
- * @param {boolean=} skipViewCreation Set to true to disable the automatic view creation
- */
-var ModelController = function(model, opts, skipViewCreation) {
-  Controller.call(this, opts, skipViewCreation);
-  this['model'] = model;
-  model && this._bindEvents();
-}
-
-/**
- * Generates a prototype instance for use by subtypes.
- * @return {ModelController}
- */
-ModelController.Prototype = function() {
-  return new ModelController(null, null, true);
-}
-
-/** @type {Controller} */
-ModelController.prototype = Controller.Prototype();
-
-/** @override */
-ModelController.prototype.remove = function() {
-  this._unbindEvents();
-  _remove.call(this);
-}
-
-/**
- * Binds to the model's change and destroy events.
- */
-ModelController.prototype._bindEvents = function() {
-  var m = this['model'];
-  m.on('change', _onChange, this);
-  m.on('destroy', _onDestroy, this);
-}
-
-/**
- * Unbinds from the model's events.
- */
-ModelController.prototype._unbindEvents = function() {
-  var m = this['model'];
-  m.off('change', _onChange, this);
-  m.off('destroy', _onDestroy, this);
-}
-
-/**
- * Runs the current render() method, which may have
- * changed since this was added as an event listener
- * @this ModelController
- */
-var _onChange = function() {
-  this['render']();
-}
-
-/**
- * Runs the current remove() method, which may have
- * changed since this was added as an event listener
- * @this ModelController
- */
-var _onDestroy = function() {
-  this['remove']();
-}
-
-/**
- * @constructor
- * @extends Controller
- * @param {Collection} collection Collection to display
- * @param {Object=} opts A list of options to attach to the controller
- * @param {boolean=} skipViewCreation Set to true to disable the automatic view creation
- */
-var CollectionController = function(collection, opts, skipViewCreation) {
-  Controller.call(this, opts, skipViewCreation);
-  this['collection'] = collection;
-  this._modelControllers = [];
-
-  if (collection) {
-    this._addModels(collection, 0);
-    this._bindEvents();
-  }
-}
-
-/**
- * Generates a prototype instance for use by subtypes.
- * @return {CollectionController}
- */
-CollectionController.Prototype = function() {
-  return new CollectionController(null, null, true);
-}
-
-/** @type {Controller} */
-CollectionController.prototype = Controller.Prototype();
-
-/** @type {Function} The constructor to use when generating ModelControllers */
-CollectionController.prototype['modelControllerType'] = ModelController;
-
-/** @override */
-CollectionController.prototype.remove = function() {
-  this._unbindEvents();
-  _remove.call(this);
-}
-
-/**
- * Binds to the add/remove events of the collection.
- */
-CollectionController.prototype._bindEvents = function() {
-  var c = this['collection'];
-  c.on('add', this._addModels, this);
-  c.on('remove', this._removeModels, this);
-}
-
-/**
- * Stops listening to the collection's events.
- */
-CollectionController.prototype._unbindEvents = function() {
-  var c = this['collection'];
-  c.off('add', this._addModels, this);
-  c.off('remove', this._removeModels, this);
-}
-
-/**
- * @param {Array.<Model>} models
- * @param {number} index
- */
-CollectionController.prototype._addModels = function(models, index) {
-  var fragment = document.createDocumentFragment();
-
-  // Generate model controllers and add views to the fragment
-  var count = models.length;
-  var controllers = new Array(count);
-  var controller;
-  while (count--) {
-    controller = controllers[count] = new this['modelControllerType'](models[count]);
-    controller.render();
-    fragment.appendChild(controller['view']);
-  }
-
-  // Insert controllers into the modelControllers list
-  splice2(this._modelControllers, index, 0, controllers);
-
-  // Insert the fragment into the DOM.
-  var parent = this['view'];
-  parent.insertBefore(fragment, parent.children[index]);
-}
-
-/**
- * @param {Array.<Model>} models
- * @param {number} index
- */
-CollectionController.prototype._removeModels = function(models, index) {
-  var count = models.length;
-  var controllers = this._modelControllers.splice(index, count);
-  while (count--) {
-    controllers[count].remove();
-  }
 }
 
 var Router = {
@@ -687,12 +527,6 @@ Craven['Controller'] = Controller;
 Controller['Prototype'] = Controller.Prototype;
 Controller.prototype['render'] = Controller.prototype.render;
 Controller.prototype['remove'] = Controller.prototype.remove;
-
-Craven['ModelController'] = ModelController;
-ModelController['Prototype'] = ModelController.Prototype;
-
-Craven['CollectionController'] = CollectionController;
-CollectionController['Prototype'] = CollectionController.Prototype;
 
 Craven['Router'] = Router;
 Router['add'] = Router.add;
