@@ -48,15 +48,6 @@ var extend = function(base, extension) {
 }
 
 /**
- * @param {Object} object
- * @param {string} property
- */
-var result = function(object, property) {
-  var value = object[property];
-  return typeof value === 'function' ? value.call(object) : value;
-}
-
-/**
  * Events mixin.
  */
 var Events = {
@@ -451,8 +442,8 @@ Controller.prototype.remove = function() {
  * tagName and attributes
  */
 Controller.prototype._createView = function() {
-  var v = document.createElement(result(this, 'tagName'))
-  extend(v, result(this, 'attributes'));
+  var v = document.createElement(this['tagName']);
+  extend(v, this['attributes']);
   this['view'] = v;
 }
 

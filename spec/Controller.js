@@ -24,24 +24,6 @@ describe('Controller', function() {
     expect(subject.view.custom).toBe('customVal');
   });
 
-  it('uses return values as options if they are functions', function() {
-    subject = new Controller({
-      tagName: function() { return 'P'; },
-      attributes: function() {
-        return {
-          id: 'testID',
-          className: 'myClass',
-          custom: 'customVal'
-        };
-      }
-    });
-
-    expect(subject.view.tagName).toBe('P');
-    expect(subject.view.id).toBe('testID');
-    expect(subject.view.className).toBe('myClass');
-    expect(subject.view.custom).toBe('customVal');
-  });
-
   describe('remove', function() {
     it('removes the view from the DOM', function() {
       subject = new Controller();
