@@ -5,8 +5,7 @@ var slice = arr.slice,
   push = arr.push,
   shift = arr.shift,
   pop = arr.pop,
-  unshift = arr.unshift,
-  map = arr.map;
+  unshift = arr.unshift;
 
 /**
  * Calls splice on the given array with an array of objects for replacement,
@@ -353,9 +352,11 @@ Collection.prototype.removeAt = function(index) {
 
 /** @override */
 Collection.prototype.toJSON = function() {
-  return this.map(function(object) {
-    return object.toJSON();
-  });
+  var result = new Array(this.length);
+  for (var counter=this.length; counter--;) {
+    result[counter] = this[counter].toJSON();
+  }
+  return result;
 }
 
 /**
@@ -383,14 +384,16 @@ Collection.prototype._triggerChange = function(changed, old, model) {
 Collection.prototype._objectify = function(data) {
   var modelType = this['modelType'];
 
-  return map.call(data, function(model) {
+  for (var counter=data.length; counter--;) {
+    var model = data[counter];
     if (!(model instanceof modelType)) {
-      model = new modelType(model);
+      model = data[counter] = new modelType(model);
     }
     model.on('destroy', this.remove, this);
     model.on('change', this._triggerChange, this);
-    return model;
-  }, this);
+  }
+
+  return data;
 }
 
 /**

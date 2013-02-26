@@ -138,8 +138,6 @@ Polyfills
 
 In modern browsers, Craven.js has no dependencies. However, for older browsers some polyfills may be necessary. Here's some of the functionality that is used that may not be available in older browsers:
 
-- `Array.prototype.map` ([compatibility](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/map#Browser_compatibility)). Recommended polyfill: 
-[es5-shim](https://github.com/kriskowal/es5-shim/) or the method listed on [MDN](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/map#Compatibility).
 - `DOMElement.addEventListener` ([compatibility](https://developer.mozilla.org/en-US/docs/DOM/element.addEventListener#Browser_Compatibility)). Recommended polyfill: [EventListener](https://github.com/jonathantneal/EventListener).
 - `window.onpopstate` / `history.pushState` ([compatibility](https://developer.mozilla.org/en-US/docs/DOM/Manipulating_the_browser_history#Browser_compatibility)). Recommended polyfill: [HTML5-History-API](https://github.com/devote/HTML5-History-API)
 - `querySelector` / `querySelectorAll` ([compatibility](https://developer.mozilla.org/en-US/docs/DOM/Document.querySelectorAll#Browser_compatibility)). Recommended polyfill: [Sizzle](http://polyfilljs.com/polyfills/queryselector.html)
