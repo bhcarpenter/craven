@@ -438,11 +438,7 @@ Controller.prototype['tagName'] = 'div';
 /** @type {Object} */
 Controller.prototype['attributes'] = {};
 
-/** */
-Controller.prototype.render = function() {}
-
 /**
- * @this Controller
  */
 Controller.prototype.remove = function() {
   var el = this['view'];
@@ -525,7 +521,6 @@ Collection.prototype['removeAt'] = Collection.prototype.removeAt;
 
 Craven['Controller'] = Controller;
 Controller['Prototype'] = Controller.Prototype;
-Controller.prototype['render'] = Controller.prototype.render;
 Controller.prototype['remove'] = Controller.prototype.remove;
 
 Craven['Router'] = Router;

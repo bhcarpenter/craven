@@ -100,7 +100,6 @@ The base type of client-side controllers.
 
 **Controller instance methods:**
 
-- `render()` - A noop by default. Instances should override this method to populate the contents of the Controller's view.
 - `remove()` - Removes the `view` property from the DOM heirarchy, if it has been added to the page.
 
 ###Routing
